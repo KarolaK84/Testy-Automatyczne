@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import junit.framework.TestCase;
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,6 +12,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class CreatingNewAdressStepdefs {
@@ -43,7 +47,7 @@ public class CreatingNewAdressStepdefs {
 
     @When("I enter {string} in the Email")
     public void iEnterInTheEmail(String email) {
-        WebElement element = driver.findElement(By.id("field-email"));
+        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("field-email")));
         element.sendKeys(email);
     }
 
@@ -63,9 +67,9 @@ public class CreatingNewAdressStepdefs {
     public void iMLoggedIn() {
         wait.until(ExpectedConditions.urlContains("controller=my-account"));
         WebElement element = driver.findElement(By.cssSelector("h1"));
-        String rzeczywistyTekst = element.getText();
-        String oczekiwanyTekst = "Your account";
-        TestCase.assertTrue(rzeczywistyTekst.contains(oczekiwanyTekst));
+        String actualText = element.getText();
+        String expectedText = "Your account";
+        TestCase.assertTrue(actualText.contains(expectedText));
     }
 
     @And("I click to Adresses")
@@ -74,7 +78,7 @@ public class CreatingNewAdressStepdefs {
         element.click();
     }
 
-    @Then("hen I go to the controller addressess page")
+    @Then("I go to the controller addressess page")
     public void henIGoToTheControllerAddressessPage() {
         String currentUrl = driver.getCurrentUrl();
         System.out.println("Current URL: " + currentUrl);
@@ -83,7 +87,7 @@ public class CreatingNewAdressStepdefs {
     }
 
     @And("I click to Create new addres")
-    public void iClickTo() {
+    public void iClickToCreateNewAddres() {
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='https://mystore-testlab.coderslab.pl/index.php?controller=address'][data-link-action='add-address']")));
         element.click();
     }
@@ -131,7 +135,50 @@ public class CreatingNewAdressStepdefs {
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.btn.btn-primary.form-control-submit.float-xs-right[type='submit']")));
         element.click();
     }
+
+    @When("I click Update")
+    public void iClickUpdate() {
+        List<WebElement> elements = driver.findElements(By.cssSelector("a[data-link-action='edit-address']"));
+        WebElement lastElement = elements.get(elements.size() - 1);
+        lastElement.click();
+    }
+
+    @Then("I verify the new alias with {string}")
+    public void iVerifyTheNewAliasWith(String alias) {
+        WebElement element = driver.findElement(By.id("field-alias"));
+        String received = element.getAttribute("value");
+        Assert.assertTrue(received.contains(alias));
+    }
+
+    @And("I verify the new address {string}")
+    public void iVerifyTheNewAddress(String address) {
+        WebElement element = driver.findElement(By.id("field-address1"));
+        String received = element.getAttribute("value");
+        Assert.assertTrue(received.contains(address));
+    }
+
+    @And("I verify the new city {string}")
+    public void iVerifyTheNewCity(String city) {
+        WebElement element = driver.findElement(By.id("field-city"));
+        String received = element.getAttribute("value");
+        Assert.assertTrue(received.contains(city));
+    }
+
+    @And("I verify the new  zip {string}")
+    public void iVerifyTheNewZip(String zip) {
+        WebElement element = driver.findElement(By.id("field-postcode"));
+        String received = element.getAttribute("value");
+        Assert.assertTrue(received.contains(zip));
+    }
+
+    @And("I verify the new phone {string}")
+    public void iVerifyTheNewPhone(String phone) {
+        WebElement element = driver.findElement(By.id("field-phone"));
+        String received = element.getAttribute("value");
+        Assert.assertTrue(received.contains(phone));
+    }
 }
+ 
 
 
 
