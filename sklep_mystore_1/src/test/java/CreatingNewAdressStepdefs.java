@@ -16,7 +16,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class CreatingNewAdressStepdefs {
     WebDriver driver;
     WebDriverWait wait;
-    private TestCase Assert;
 
     @Before
     public void iOpenTheBrowser() {
@@ -79,13 +78,13 @@ public class CreatingNewAdressStepdefs {
     public void henIGoToTheControllerAddressessPage() {
         String currentUrl = driver.getCurrentUrl();
         System.out.println("Current URL: " + currentUrl);
-        String expectedUrl = "https://prod-kurs.coderslab.pl/index.php?controller=addresses";
+        String expectedUrl = "https://mystore-testlab.coderslab.pl/index.php?controller=addresses";
         TestCase.assertEquals("Current URL is not as expected", expectedUrl, currentUrl);
     }
 
     @And("I click to Create new addres")
     public void iClickTo() {
-        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='https://prod-kurs.coderslab.pl/index.php?controller=address'][data-link-action='add-address']")));
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='https://mystore-testlab.coderslab.pl/index.php?controller=address'][data-link-action='add-address']")));
         element.click();
     }
 
