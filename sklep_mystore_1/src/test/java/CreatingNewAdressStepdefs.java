@@ -31,7 +31,7 @@ public class CreatingNewAdressStepdefs {
 
     @After
     public void closeBrowser() {
-        //driver.quit();
+        driver.quit();
     }
 
     @Then("I go the page My Store")
@@ -143,7 +143,24 @@ public class CreatingNewAdressStepdefs {
         lastElement.click();
     }
 
-    @Then("I verify the new alias with {string}")
+
+    @Then("I verify the new alias {string}, address {string}, city {string}, zip {string}, phone {string}")
+    public void iVerifyTheNewAliasAddressCityZipPhone(String alias, String address, String city, String zip, String phone) {
+        verifyField("field-alias", alias);
+        verifyField("field-address1", address);
+        verifyField("field-city", city);
+        verifyField("field-postcode", zip);
+        verifyField("field-phone", phone);
+    }
+
+    private void verifyField(String fieldId, String expectedValue) {
+        WebElement element = driver.findElement(By.id(fieldId));
+        String received = element.getAttribute("value");
+        Assert.assertTrue("Expected: " + expectedValue + ", but got: " + received, received.contains(expectedValue));
+    }
+
+
+    /* @Then("I verify the new alias with {string}")
     public void iVerifyTheNewAliasWith(String alias) {
         WebElement element = driver.findElement(By.id("field-alias"));
         String received = element.getAttribute("value");
@@ -176,7 +193,7 @@ public class CreatingNewAdressStepdefs {
         WebElement element = driver.findElement(By.id("field-phone"));
         String received = element.getAttribute("value");
         Assert.assertTrue(received.contains(phone));
-    }
+    } */
 }
  
 

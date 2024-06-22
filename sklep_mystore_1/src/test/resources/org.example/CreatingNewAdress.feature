@@ -18,11 +18,12 @@ Feature: Creating New Address
     And I enter the phone "<phone>"
     And I save the new address
     When I click Update
-    Then I verify the new alias with "<alias>"
-    And I verify the new address "<address>"
-    And I verify the new city "<city>"
-    And I verify the new  zip "<zip>"
-    And I verify the new phone "<phone>"
+    Then I verify the new alias "<alias>", address "<address>", city "<city>", zip "<zip>", phone "<phone>"
+    #Then I verify the new alias with "<alias>"
+    #And I verify the new address "<address>"
+    #And I verify the new city "<city>"
+    #And I verify the new  zip "<zip>"
+    #And I verify the new phone "<phone>"
 
 
     Examples:
