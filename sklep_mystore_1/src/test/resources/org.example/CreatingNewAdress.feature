@@ -24,6 +24,8 @@ Feature: Creating New Address
     #And I verify the new city "<city>"
     #And I verify the new  zip "<zip>"
     #And I verify the new phone "<phone>"
+    Then Go to controlel address page
+    When I delete added address
 
 
     Examples:

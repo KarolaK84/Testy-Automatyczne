@@ -12,7 +12,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -143,7 +145,6 @@ public class CreatingNewAdressStepdefs {
         lastElement.click();
     }
 
-
     @Then("I verify the new alias {string}, address {string}, city {string}, zip {string}, phone {string}")
     public void iVerifyTheNewAliasAddressCityZipPhone(String alias, String address, String city, String zip, String phone) {
         verifyField("field-alias", alias);
@@ -158,6 +159,27 @@ public class CreatingNewAdressStepdefs {
         String received = element.getAttribute("value");
         Assert.assertTrue("Expected: " + expectedValue + ", but got: " + received, received.contains(expectedValue));
     }
+
+    @Then("Go to controlel address page")
+    public void goToControlelAddressPage() {
+        driver.get("https://mystore-testlab.coderslab.pl/index.php?controller=addresses");
+    }
+
+    @When("I delete added address")
+    public void iDeleteAddedAddress() {
+        List<WebElement> elements = driver.findElements(By.cssSelector("a[data-link-action='delete-address']"));
+   if (!elements.isEmpty()){
+       WebElement lastElement = elements.get(elements.size() - 1);
+       WebDriverWait wait = new WebDriverWait(driver, 10);
+       wait.until(ExpectedConditions.elementToBeClickable(lastElement));
+       lastElement.click();
+   } else {
+       throw new NoSuchElementException("No elements found with the given selector");
+   }
+    }
+
+
+
 
 
     /* @Then("I verify the new alias with {string}")
