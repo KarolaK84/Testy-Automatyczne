@@ -5,14 +5,19 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import junit.framework.TestCase;
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.lang.Thread;
+
 
 public class PurchasesStepdefs {
     WebDriver driver;
@@ -28,7 +33,7 @@ public class PurchasesStepdefs {
 
     @After
     public void closeBrowser() {
-        //driver.quit();
+        driver.quit();
     }
 
     @Then("I go the page My Store")
@@ -109,11 +114,20 @@ public class PurchasesStepdefs {
     public void iChoosePiecesPieces(String pieces) {
         WebElement piecesDropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("quantity_wanted")));
         piecesDropdown.click();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException ignored) {
+        }
+
         while (!piecesDropdown.getAttribute("value").isEmpty()) {
             piecesDropdown.sendKeys(Keys.CONTROL, "A");
             piecesDropdown.sendKeys(Keys.DELETE);
         }
-        //piecesDropdown.clear();
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException ignored) {
+        }
+
         piecesDropdown.sendKeys(pieces);
     }
 
@@ -122,13 +136,6 @@ public class PurchasesStepdefs {
         WebElement clickButton = driver.findElement(By.cssSelector("button.btn.btn-primary.add-to-cart"));
         clickButton.click();
     }
-    //@When("i see Product successfully added to your shopping cart")
-    // public void iSeeProductSuccessfullyAddedToYourShoppingCart() {
-    // WebElement element = driver.findElement(By.cssSelector("h4"));
-    //String actualText = element.getText();
-    // String expectedText = "Product successfully added to your shopping cart";
-    // Assert.assertTrue(expectedText.contains(actualText));
-    //  }
 
     @Then("I click Proceed to checkout button")
     public void iClickProceedToCheckoutButton() {
@@ -152,53 +159,82 @@ public class PurchasesStepdefs {
         driver.get("https://mystore-testlab.coderslab.pl/index.php?controller=order");
     }
 
-    //@Then("if address not exists quit error")
-    //public void ifAddressNotExistsQuitError() {
-    // }
-
-    @When("I am addresses step")
-    public void iAmAddressesStep() {
-        WebElement element = driver.findElement(By.cssSelector("h1"));
-        String actualText = element.getText();
-        String expectedText = "ADDRESSES";
-        Assert.assertTrue(actualText.contains(expectedText));
-    }
 
     @And("I click continue button")
     public void iClickContinueButton() {
+        WebElement button = driver.findElement(By.name("confirm-addresses"));
+        button.click();
     }
 
-    @When("I am on Shipping Method step")
-    public void iAmOnShippingMethodStep() {
+    @And("I click on radio button method of delivery {string}")
+    public void iClickOnRadioButtonMoD(String methodOfDelivery) {
+
+        List<WebElement> buttons = driver.findElements(By.cssSelector("label[class='col-xs-9 col-sm-11 delivery-option-2']"));
+        for (int i = 0; i < buttons.size(); i++) {
+            WebElement btn = buttons.get(i);
+            String html = btn.getAttribute("innerHTML");
+            if (html.contains(methodOfDelivery)) {
+                btn.click();
+                break;
+            }
+        }
     }
 
-    @And("I click on radio button {string}")
-    public void iClickOnRadioButton(String methodOfDelivery) {
+    @And("I click continue button on Shipping Method")
+    public void iClickContinueButtonOnShippingMethod() {
+        WebElement button = driver.findElement(By.name("confirmDeliveryOption"));
+        button.click();
     }
 
-    @When("I am on Payment step")
-    public void iAmOnPaymentStep() {
-    }
-
-    @And("I choice radio {string}")
-    public void iChoiceRadio(String methodOfPayment) {
+    @And("I choice radio method of payment {string}")
+    public void iChoiceRadioMoP(String methodOfPayment) {
+        List<WebElement> buttons = driver.findElements(By.cssSelector("label[for*='payment-option']"));
+        for (int i = 0; i < buttons.size(); i++) {
+            WebElement btn = buttons.get(i);
+            String html = btn.getAttribute("innerHTML");
+            if (html.contains(methodOfPayment)) {
+                btn.click();
+                break;
+            }
+        }
     }
 
     @And("I check checkbox \"i agree terms and conditions\"")
     public void iCheckCheckbox() {
+        WebElement checkbox = driver.findElement(By.id("conditions_to_approve[terms-and-conditions]"));
+        checkbox.click();
     }
 
     @And("I click Place order button")
     public void iClickPlaceOrderButton() {
+        List<WebElement> buttons = driver.findElements(By.cssSelector("button[type='submit']"));
+        for (int i = 0; i < buttons.size(); i++) {
+            WebElement btn = buttons.get(i);
+            String btn_txt = btn.getText().toLowerCase();
+            if (btn_txt.contains("place order")) {
+                btn.click();
+                break;
+            }
+        }
     }
 
     @When("I am on order confirmation page")
     public void iAmOnOrderConfirmationPage() {
+        List<WebElement> elements = driver.findElements(By.className("page-order-confirmation"));
+        TestCase.assertTrue(elements.size() > 0);
     }
 
     @Then("I make screenshot confirment order and price")
     public void iMakeScreenshotConfirmentOrderAndPrice() {
+        WebElement element = driver.findElement(By.id("main"));
+        File screenshotFile = element.getScreenshotAs(OutputType.FILE);
+
+        try {
+            Path destinationPath = new File("element_screenshot.png").toPath();
+            Files.copy(screenshotFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Zapisano zrzut ekranu elementu jako element_screenshot.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-
 }
